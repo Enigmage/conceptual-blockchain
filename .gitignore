@@ -1,0 +1,56 @@
+# Maven build directories
+target/
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse-specific files
+.classpath
+.project
+.settings/
+
+# NetBeans-specific files
+nbproject/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+
+# IntelliJ-specific files
+*.iws
+*.iml
+*.ipr
+out/
+.idea/
+
+# Compiled Java classes
+*.class
+
+# Maven-specific files
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+log/
+logging/
+
+# Temporary files
+*.swp
+*~
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
