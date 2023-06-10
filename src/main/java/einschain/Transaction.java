@@ -1,5 +1,6 @@
 package einschain;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 
@@ -30,5 +31,15 @@ public class Transaction {
             + StringUtil.getFromKey(receiver)
             + Float.toString(amount)
             + transactionCount);
+  }
+
+  public void generateSignature(PrivateKey privKey) {
+    String data = StringUtil.getFromKey(sender) + StringUtil.getFromKey(receiver) + Float.toString(amount);
+    signature = StringUtil.applyECDSASig(privKey, data);
+  }
+
+  public boolean verifySignature(PublicKey pubKey) {
+    String data = StringUtil.getFromKey(sender) + StringUtil.getFromKey(receiver) + Float.toString(amount);
+    return StringUtil.verifyECDSASig(pubKey, data, signature);
   }
 }

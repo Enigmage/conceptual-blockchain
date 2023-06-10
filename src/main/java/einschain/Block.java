@@ -17,9 +17,8 @@ public class Block {
   }
 
   public String calculateHash() {
-    String computedHash =
-        StringUtil.applySha256(
-            previousHash + Long.toString(timeStamp) + Integer.toString(nonce) + data);
+    String computedHash = StringUtil.applySha256(
+        previousHash + Long.toString(timeStamp) + Integer.toString(nonce) + data);
     return computedHash;
   }
 
@@ -31,9 +30,5 @@ public class Block {
       hash = calculateHash();
     }
     System.out.println("Block mined: " + hash);
-  }
-
-  public long getMtime() {
-    return this.timeStamp;
   }
 }
