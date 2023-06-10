@@ -13,7 +13,7 @@ public class Einschain {
   public static Boolean isChainValid() {
     Block curr, prev;
     String hashTarget = "0".repeat(difficulty); // Java 11+
-    for (int i = 1; i < blockchain.size(); i++) {
+    for (int i = 1; i < blockchain.size(); ++i) {
       curr = blockchain.get(i);
       prev = blockchain.get(i - 1);
 
