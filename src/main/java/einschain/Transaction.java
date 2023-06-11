@@ -24,6 +24,16 @@ public class Transaction {
     this.inputs = inputs;
   }
 
+  public boolean processTransaction() {
+    if (verifySignature() == false) {
+      System.out.println("#Signature invalid");
+      return false;
+    }
+    for (TransactionInput i : inputs)
+      i.UTXO = Einschain.UTXOs.get(i.transactionOutputId);
+    return true;
+  }
+
   private String computeHash() {
     transactionCount++;
     return StringUtil.applySha256(
@@ -38,8 +48,8 @@ public class Transaction {
     signature = StringUtil.applyECDSASig(privKey, data);
   }
 
-  public boolean verifySignature(PublicKey pubKey) {
+  public boolean verifySignature() {
     String data = StringUtil.getFromKey(sender) + StringUtil.getFromKey(receiver) + Float.toString(amount);
-    return StringUtil.verifyECDSASig(pubKey, data, signature);
+    return StringUtil.verifyECDSASig(sender, data, signature);
   }
 }

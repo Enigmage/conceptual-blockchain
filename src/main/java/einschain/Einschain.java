@@ -3,16 +3,19 @@ package einschain;
 import com.google.gson.GsonBuilder;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.HashMap;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class Einschain {
   public static ArrayList<Block> blockchain = new ArrayList<Block>();
+  public static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>();
   public static int difficulty = 5;
   public static Wallet walletA;
   public static Wallet walletB;
 
   public static Boolean isChainValid() {
     Block curr, prev;
-    String hashTarget = "0".repeat(difficulty); // Java 11+
+    final String hashTarget = "0".repeat(difficulty); // Java 11+
     for (int i = 1; i < blockchain.size(); ++i) {
       curr = blockchain.get(i);
       prev = blockchain.get(i - 1);
@@ -27,31 +30,13 @@ public class Einschain {
     return true;
   }
 
-  public static void prettyPrint() {
-    String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-    System.out.println(blockchainJson);
-  }
-
-  public static void walletDemo() {
-    // Setup Bouncey castle as a Security Provider
-    // Create the new wallets
-    walletA = new Wallet();
-    walletB = new Wallet();
-    // Test public and private keys
-    System.out.println("Private and public keys:");
-    System.out.println(StringUtil.getStringFromKey(walletA.privateKey));
-    System.out.println(StringUtil.getStringFromKey(walletA.publicKey));
-    // Create a test transaction from WalletA to walletB
-    Transaction transaction = new Transaction(walletA.publicKey, walletB.publicKey, 5, null);
-    transaction.generateSignature(walletA.privateKey);
-    // Verify the signature works and verify it from the public key
-    System.out.println("Is signature verified");
-    System.out.println(transaction.verifySignature(walletA.publicKey));
-    System.out.println("Wallet B has " + transaction.amount);
+  public static String getJson() {
+    final String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
+    return blockchainJson;
   }
 
   public static void main(String args[]) {
-    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    Security.addProvider(new BouncyCastleProvider());
     blockchain.add(new Block("Genesis block", "0"));
     System.out.println("Mining block 1");
     blockchain.get(blockchain.size() - 1).mineBlock(difficulty);
@@ -62,9 +47,17 @@ public class Einschain {
     System.out.println("Mining block 3");
     blockchain.get(blockchain.size() - 1).mineBlock(difficulty);
     System.out.println(isChainValid());
-    // String blockchainJson = new
-    // GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-    prettyPrint();
-    walletDemo();
+    walletA = new Wallet();
+    walletB = new Wallet();
+    // Test public and private keys
+    System.out.println("Private and public keys:");
+    System.out.println(StringUtil.getStringFromKey(walletA.privateKey));
+    System.out.println(StringUtil.getStringFromKey(walletA.publicKey));
+    // Create a test transaction from WalletA to walletB
+    final Transaction transaction = new Transaction(walletA.publicKey, walletB.publicKey, 5, null);
+    transaction.generateSignature(walletA.privateKey);
+    // Verify the signature works and verify it from the public key
+    System.out.println(
+        "Signature is " + (transaction.verifySignature() ? "verified" : "not verified"));
   }
 }
