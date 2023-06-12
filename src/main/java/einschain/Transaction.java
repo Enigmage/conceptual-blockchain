@@ -31,7 +31,38 @@ public class Transaction {
     }
     for (TransactionInput i : inputs)
       i.UTXO = Einschain.UTXOs.get(i.transactionOutputId);
+
+    if (getInputsValue() < Einschain.minimumTransaction) {
+      System.out.println("#Transaction inputs too small " + getInputsValue());
+      System.out.println("Please enter amount greater than " + Einschain.minimumTransaction);
+      return false;
+    }
+
+    float leftOver = getInputsValue() - amount;
+    transactionId = computeHash();
+
+    outputs.add(new TransactionOutput(this.receiver, amount, transactionId));
+    outputs.add(new TransactionOutput(this.sender, leftOver, transactionId));
+
+    for (TransactionOutput o : outputs)
+      Einschain.UTXOs.put(o.id, o);
+
+    for (TransactionInput i : inputs) {
+      if (i.UTXO != null)
+        Einschain.UTXOs.remove(i.UTXO.id);
+    }
+
     return true;
+  }
+
+  public float getInputsValue() {
+    float total = 0;
+    for (TransactionInput i : inputs) {
+      if (i.UTXO == null)
+        continue;
+      total += i.UTXO.amount;
+    }
+    return total;
   }
 
   private String computeHash() {

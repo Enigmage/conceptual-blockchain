@@ -6,10 +6,14 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
+import java.util.HashMap;
 
 public class Wallet {
   public PrivateKey privateKey;
   public PublicKey publicKey;
+  public HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>(); // only UTXOs owned by
+
+  // this wallet.
 
   public Wallet() {
     generateKeyPair();
@@ -27,5 +31,13 @@ public class Wallet {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public float getBalance() {
+    return Einschain.UTXOs.values().stream()
+        .filter(transactionOutput -> transactionOutput.isMyCoin(publicKey))
+        .peek(transactionOutput -> UTXOs.put(transactionOutput.id, transactionOutput))
+        .map(transactionOutput -> transactionOutput.amount)
+        .reduce(0f, Float::sum);
   }
 }
